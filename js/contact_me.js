@@ -19,10 +19,13 @@ $(function() {
       $this.prop("disabled", true); // Disable submit button until AJAX call is complete to prevent duplicate messages
       $.ajax({
         url: "https://formspree.io/mjvvyekd",
-        type: "POST",
-        data: {
+        type: "POST", crossDomain:true,
+        data: JSON.stringify({
           name: name,
           email: email,
+        }),
+        beforeSend: function(request) {
+          request.setRequestHeader("Content-Type", 'application/json');
         },
         cache: false,
         success: function() {
@@ -37,15 +40,15 @@ $(function() {
           //clear all fields
           $('#contactForm').trigger("reset");
         },
-        error: function() {
-          // Fail message
-          $('#success').html("<div class='alert alert-danger'>");
-          $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
-            .append("</button>");
-          $('#success > .alert-danger').append($("<strong>").text("Sorry " + firstName + ", it seems that my mail server is not responding. Please try again later!"));
-          $('#success > .alert-danger').append('</div>');
-          //clear all fields
-          $('#contactForm').trigger("reset");
+        error: function(response) {
+            // Fail message
+            $('#success').html("<div class='alert alert-danger'>");
+            $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
+              .append("</button>");
+            $('#success > .alert-danger').append($("<strong>").text("Sorry " + firstName + ", it seems that my mail server is not responding. Please try again later!"));
+            $('#success > .alert-danger').append('</div>');
+            //clear all fields
+            $('#contactForm').trigger("reset");
         },
         complete: function() {
           setTimeout(function() {
